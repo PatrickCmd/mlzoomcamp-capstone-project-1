@@ -1,3 +1,6 @@
+# mlzoomcamp-capstone-project-1
+
+
 # Kitchenware Competition Starter
 
 A starter notebook for [the Kitchenware classification competition](https://www.kaggle.com/competitions/kitchenware-classification/) on Kaggle: [keras-starter.ipynb](keras-starter.ipynb)
