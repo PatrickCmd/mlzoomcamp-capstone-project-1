@@ -50,3 +50,12 @@ We will use AWS Lambda for this session. Even though it's serverless, we will ha
 To learn more about `Tensorflow-Lite` and `AWS-LAMBDA` see the references from [Alvaro Navas](https://github.com/ziritrion/ml-zoomcamp/blob/main/notes/09_serverless.md) and [Muhammad Awon](https://github.com/MuhammadAwon/ml-engineering/blob/main/09-serverless/README.md)
 
 For this project follow the instructions in the [tflite_code directory](./tflite_code/README.md)
+
+## Model serving with Kubernetes and Tensorflow-Serving
+**Kubernetes** is a container orchestration system used to automatically deploy, scale and operate containers.
+
+I use Kubernetes along with TensorFlow Serving, a component of the TensorFlow Extended (TFX) family of technologies used to deploy models in production environments.
+
+See reference from [Alvaro Navas Notes](https://github.com/ziritrion/ml-zoomcamp/blob/main/notes/10_kubernetes.md) and [Muhammad Awon Notes](https://github.com/MuhammadAwon/ml-engineering/blob/main/10-kubernetes/README.md) for explanation about [Kubernetes](https://kubernetes.io/) together with [Tensorflow-Serving](https://www.tensorflow.org/tfx/guide/serving)
+
+See [Tensorflow-Serving Section](./tensforflow-serving/README.md) for more instructions on how to serve the image-classifier model for this project with kubernetes and tensorflow-serving both locally and with [AWS EKS](https://aws.amazon.com/eks/)

@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+tensorflow-protobuf = "==2.11.0"
+grpcio = "==1.51.1"
+keras-image-helper = "*"
+fastapi = "==0.88.0"
+uvicorn = "==0.20.0"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
