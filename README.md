@@ -38,3 +38,15 @@ You can also see it as a video:
 <a href="https://www.loom.com/share/c41e5691bd36414fa4df8de9c905cc58">
     <img src="https://user-images.githubusercontent.com/875246/206399525-097683c4-62bd-436b-815a-4ac8543502a9.png" />
 </a>
+
+
+
+
+## Model serving with serverless (AWS LAMBDA) and Tensorflow-Lite
+Serverless is the concept of removing infrastructure considerations for deploying code. Instead of having to manage servers and infrastructure by ourselves, a serverless service takes care of that for us and only charges according to use.
+
+We will use AWS Lambda for this session. Even though it's serverless, we will have to use Docker to package our model and serve predictions.
+
+To learn more about `Tensorflow-Lite` and `AWS-LAMBDA` see the references from [Alvaro Navas](https://github.com/ziritrion/ml-zoomcamp/blob/main/notes/09_serverless.md) and [Muhammad Awon](https://github.com/MuhammadAwon/ml-engineering/blob/main/09-serverless/README.md)
+
+For this project follow the instructions in the [tflite_code directory](./tflite_code/README.md)
