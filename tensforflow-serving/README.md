@@ -1,4 +1,7 @@
 # Tensorflow Serving
+
+![architecture](./images/architecture-service.png)
+
 I use TensorFlow Serving and deploy it on the Kubernates. TF-Serving library is written in C++ and it focuses only on inference, it takes preprocessed input and output the prediction.
 
 **Tensorflow-serving** makes use of [**gRPC**](https://grpc.io/), a framework for connecting services in and across datacenters. gRPC uses Protocol Buffers (AKA Protobuf) for formatting data, a kind of binary encoding which is faster and more efficient than JSON.

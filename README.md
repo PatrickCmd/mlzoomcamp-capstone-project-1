@@ -1,7 +1,21 @@
-# mlzoomcamp-capstone-project-1
+# MLZOOMCAMP CAPSTONE PROJECT 1
 
+This is capstone project for the [MLZoomCamp](https://github.com/alexeygrigorev/mlbookcamp-code/tree/master/course-zoomcamp) course [here](https://github.com/PatrickCmd/mlzoomcamp/blob/main/course-zoomcamp/cohorts/2022/projects.md#capstone-1) sponsored by [DataTalks.Club](https://datatalks.club/)
 
-# Kitchenware Competition Starter
+## Problem
+Classify kitchen items into 6 categories: cups, glasses, plates, spoons, forks and knives
+
+## Dataset
+The chosen dataset for this project is from the Kitchenware Classification Dataset from [Kaggle](https://www.kaggle.com/competitions/kitchenware-classification/overview/description)
+
+## Project Setup
+For data preparation and model training I used [Saturn Cloud](https://saturncloud.io/) platform. See the instructions below from the competition starter notebook describing how to setup saturn cloud, adding kaggle credentials to be able to download kaggle datasets. The notebook for data preparation and model training and evaluation can be found [here](https://nbviewer.org/github/PatrickCmd/mlzoomcamp-capstone-project-1/blob/main/notebooks/Kitchenware-Classification-Competition-clean.ipynb)
+
+I deploy the model as web service both locally and to the cloud specifically AWS. I use Tensforflow-Lite to deploy the model to AWS Lambda, see the section below for more instructions.
+
+Also I get to deploy the model on kubernetes with Tensorflow-Serving and AWS EKS. Below is section to give more detailed instructions.
+
+### Kitchenware Competition Starter
 
 A starter notebook for [the Kitchenware classification competition](https://www.kaggle.com/competitions/kitchenware-classification/) on Kaggle: [keras-starter.ipynb](keras-starter.ipynb)
 
