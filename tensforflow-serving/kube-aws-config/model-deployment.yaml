@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tf-serving-image-classifier-model
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tf-serving-image-classifier-model
+  template:
+    metadata:
+      labels:
+        app: tf-serving-image-classifier-model
+    spec:
+      containers:
+      - name: tf-serving-image-classifier-model
+        image: 470656852239.dkr.ecr.us-east-1.amazonaws.com/image-classifier:image-classifier-model-v1
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "0.5"
+        ports:
+        - containerPort: 8500

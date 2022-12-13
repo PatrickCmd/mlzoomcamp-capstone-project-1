@@ -132,3 +132,168 @@ Or browse with the url `http://localhost:9696/docs` and test out the predict end
 ![model service](./images/model-web-service.png)
 
 ![classifier response](./images/model-classifier-response.png)
+
+## Deploying to EKS
+[**EKS**](https://aws.amazon.com/eks/) is AWS' Kubernetes service. I describe below the steps how to deploy our app to [EKS](https://aws.amazon.com/eks/).
+
+### Creating a cluster on EKS
+We can use the AWS website or aws-cli to create a cluster, but we will use instead [`eksctl`](https://eksctl.io/).
+
+[`eksctl`](https://eksctl.io/) is a CLI tool for creating and managing clusters on EKS. You may learn more about it on its [official website](https://eksctl.io/). You can find download and install instructions on the [AWS EKS documentation pages](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html).
+
+`eksctl` can create clusters with default values. If you want to customize your cluster, you will need to provide a YAML configuration file.
+
+Here's an example [eks-config.yaml](./kube-aws-config/eks-config.yaml) file:
+
+```
+cd kube-aws-config
+```
+
+```
+eksctl create cluster -f eks-config.yaml
+```
+
+If you encounter any issues, check CloudFormation console or try
+
+```
+ eksctl utils describe-stacks --region=us-east-1 --cluster=image-classifier-eks
+```
+
+In case you need to clean up resources
+
+```
+eksctl delete cluster --region=us-east-1 --name=image-classifier-eks
+```
+
+## Publishing the image to ECR
+For EKS to work we need to provide the Docker images we will use for our deployments.
+
+### Create ECR repository
+```
+aws ecr create-repository --repository-name image-classifier
+```
+
+```
+{
+    "repository": {
+        "repositoryArn": "arn:aws:ecr:us-east-1:470656852239:repository/image-classifier",
+        "registryId": "470656852239",
+        "repositoryName": "image-classifier",
+        "repositoryUri": "470656852239.dkr.ecr.us-east-1.amazonaws.com/image-classifier",
+        "createdAt": "2022-12-06T15:42:25+03:00",
+        "imageTagMutability": "MUTABLE",
+        "imageScanningConfiguration": {
+            "scanOnPush": false
+        },
+        "encryptionConfiguration": {
+            "encryptionType": "AES256"
+        }
+    }
+}
+```
+
+### Updating the deployment config files
+We now need to modify both `model-deployment-yaml` and `gateway-deployment-yaml` so that the container specs point to the images hosted on ECR as seen in the [kube-aws-config](./kube-aws-config/) directory.
+
+```
+ACCOUNT_ID=470656852239
+REGION=us-east-1
+REPOSITORY_IMAGE=image-classifier
+PREFIX=${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY_IMAGE}
+
+GATEWAY_LOCAL=image-classifier-gateway:v1
+GATEWAY_REMOTE=${PREFIX}:image-classifier-gateway-v1
+docker tag ${GATEWAY_LOCAL} ${GATEWAY_REMOTE}
+
+IMAGE_MODEL_LOCAL=image-classifier-model:v1
+IMAGE_MODEL_REMOTE=${PREFIX}:image-classifier-model-v1
+docker tag ${IMAGE_MODEL_LOCAL} ${IMAGE_MODEL_REMOTE}
+```
+
+### Login into ECR
+```
+$(aws ecr get-login --no-include-email)
+```
+
+```
+aws ecr get-login-password \
+    --region ${REGION} \
+| docker login \
+    --username AWS \
+    --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
+```
+
+```
+Login Succeeded
+
+Logging in with your password grants your terminal complete access to your account.
+For better security, log in with a limited-privilege personal access token. Learn more at https://docs.docker.com/go/access-tokens/
+```
+
+### Push images to ECR
+```
+docker push ${IMAGE_MODEL_REMOTE}
+docker push ${GATEWAY_REMOTE}
+```
+
+### Applying the deployments and services to EKS
+Once `eksctl` finishes creating the cluster, kubectl should already be configured to work with it. You can test it with the following command:
+
+```
+kubectl get nodes
+```
+
+Once we've checked that kubectl displays the nodes (actually single node in this project) of our cluster, we can start applying and testing the deployments and services.
+
+Let's begin with the model.
+
+```
+kubectl apply -f model-deployment.yaml
+kubectl apply -f model-service.yaml
+kubectl get pod # check if the pod is active
+kubectl get service # check if service is working
+```
+
+start testing by doing port forwarding to test the service:
+
+```
+kubectl port-forward service/tf-serving-image-classifier-model 8500:8500
+```
+
+On another terminal, run the gateway script locally
+
+```
+python gateway.py
+```
+
+Let's now continue with the gateway.
+
+```
+kubectl apply -f gateway-deployment.yaml
+kubectl apply -f gateway-service.yaml
+kubectl get pod # check if the pod is active
+kubectl get service # check if service is working
+```
+
+This time, the output of kubectl get service should show an external IP next to the gateway service.
+
+Let's do port forwarding to test it:
+
+```
+kubectl port-forward service/gateway 8080:80
+```
+
+On another terminal, run the test script locally
+```
+python test.py
+```
+
+Finally, use the test script. Update the test script to point to the external URL of the gateway service.
+
+> **WARNING**: The gateway is open to everyone who has the URL. AWS will charge you for machine uptime and requests received. Leaving it as it is may result in unwanted charges. There are ways to limit access to the gateway but it falls outside the scope of this project.
+
+After you're done with the cluster, you may delete it to avoid additional charges.
+
+```
+eksctl delete cluster --name image-classifier-eks
+```

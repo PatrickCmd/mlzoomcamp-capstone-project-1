@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tf-serving-image-classifier-model
+spec:
+  selector:
+    app: tf-serving-image-classifier-model
+  ports:
+  - port: 8500
+    targetPort: 8500
